@@ -1,7 +1,7 @@
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{PgPool, Row};
 use std::result;
-use time::OffsetDateTime;
+// use time::OffsetDateTime;
 use uuid::Uuid;
 
 // use learning_sqlx_rs::Organization;
@@ -24,9 +24,9 @@ pub struct User {
 pub struct OrganizationPRES {
     id: Uuid,
     name: String,
-//     description: Option<String>,
-//     created_at: OffsetDateTime,
-//     updated_at: OffsetDateTime,
+    //     description: Option<String>,
+    //     created_at: OffsetDateTime,
+    //     updated_at: OffsetDateTime,
 }
 
 #[tokio::main] // Requires the `attributes` feature of `async-std`
@@ -40,8 +40,8 @@ async fn main() -> Result<(), sqlx::Error> {
         .connect(&database_url)
         .await?;
 
-    // println!("---------- Users: ");
-    // select_users(&db).await?;
+    println!("---------- Users: ");
+    select_users(&db).await?;
 
     println!("---------- DDD style Organization: ");
     select_ddd_users(&db).await?;
