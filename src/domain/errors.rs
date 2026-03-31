@@ -1,10 +1,17 @@
 use derive_more::{Display, From};
 
-pub type Result<T> = core::result::Result<T, Error>;
+pub type Result<T> = core::result::Result<T, DomainError>;
 
 #[derive(Debug, Display, From)]
 #[display("{self:?}")]
-pub enum Error {
+pub enum DomainError {
+    // -- enum error variants
+    InvalidRole(String),
+
+    // -- value object errors
+    InvalidEmail(String),
+
+    // Custom(String),
     #[from(String, &String, &str)]
     Custom(String),
 
@@ -15,7 +22,7 @@ pub enum Error {
 
 // region:    --- Custom
 
-impl Error {
+impl DomainError {
     pub fn custom_from_err(err: impl std::error::Error) -> Self {
         Self::Custom(err.to_string())
     }
@@ -29,6 +36,6 @@ impl Error {
 
 // region:    --- Error Boilerplate
 
-impl std::error::Error for Error {}
+impl std::error::Error for DomainError {}
 
 // endregion: --- Error Boilerplate
