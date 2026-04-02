@@ -26,7 +26,7 @@ impl Organization {
         }
     }
 
-    // Reconstruct from persistence (used by Repository)
+    //Reconstruct from persistence (used by Repository)
     pub fn from_persistence(
         id: Uuid,
         name: String,

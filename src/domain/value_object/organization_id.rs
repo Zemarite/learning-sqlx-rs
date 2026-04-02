@@ -24,6 +24,12 @@ impl OrganizationId {
     }
 }
 
+impl From<Uuid> for OrganizationId {
+    fn from(uuid: Uuid) -> Self {
+        Self(uuid)
+    }
+}
+
 impl fmt::Display for OrganizationId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.0)
