@@ -18,13 +18,13 @@ async fn main() -> Result<(), sqlx::Error> {
 
     find_user_by_id(&db).await?;
     println!("---------- Users: ");
-    select_users(&db).await?;
+    find_all_users(&db).await?;
 
     println!("---------- DDD style OrganizationResponse: ");
-    select_organization_response(&db).await?;
+    find_all_organization_response(&db).await?;
 
     println!("---------- DDD style Organization Entity: ");
-    select_organization_entity(&db).await?;
+    find_all_organization_entity(&db).await?;
 
     // println!("---------- Users join Organizations: ");
     // select_users_join_organizations(&db).await?;
@@ -34,7 +34,7 @@ async fn main() -> Result<(), sqlx::Error> {
 
 /// Fetches every row from `public.members` using a raw query and prints
 /// each member's `id` and `name`.
-async fn select_users(db: &sqlx::Pool<sqlx::Postgres>) -> result::Result<(), sqlx::Error> {
+async fn find_all_users(db: &sqlx::Pool<sqlx::Postgres>) -> result::Result<(), sqlx::Error> {
     let id = Uuid::parse_str("9b29622c-add1-42e5-b5e2-b6f9246939c5").unwrap();
     let query = "SELECT id, name FROM public.members";
     let users = sqlx::query(query).fetch_all(db).await?;
@@ -78,7 +78,7 @@ pub struct OrganizationResponse {
 
 /// Fetches all organizations into [`OrganizationResponse`] DTOs using
 /// [`sqlx::query_as!`] (requires public struct fields).
-async fn select_organization_response(db: &PgPool) -> result::Result<(), sqlx::Error> {
+async fn find_all_organization_response(db: &PgPool) -> result::Result<(), sqlx::Error> {
     let orgs: Vec<OrganizationResponse> = sqlx::query_as!(
         OrganizationResponse,
         "SELECT id, name, description, created_at, updated_at FROM public.organizations"
@@ -100,7 +100,7 @@ async fn select_organization_response(db: &PgPool) -> result::Result<(), sqlx::E
 /// and enforces invariants, so `query!` (not `query_as!`) is used and rows
 /// are reconstructed through the factory method.
 #[allow(non_snake_case)]
-async fn select_organization_entity(db: &PgPool) -> result::Result<(), sqlx::Error> {
+async fn find_all_organization_entity(db: &PgPool) -> result::Result<(), sqlx::Error> {
     let rows = sqlx::query!(
         "SELECT id, name, description, created_at, updated_at FROM public.organizations"
     )
