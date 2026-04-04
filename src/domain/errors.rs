@@ -10,6 +10,7 @@ pub enum DomainError {
 
     // -- value object errors
     InvalidEmail(String),
+    ValidationError(String),
 
     // Custom(String),
     #[from(String, &String, &str)]

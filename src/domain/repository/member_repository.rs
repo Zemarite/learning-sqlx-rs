@@ -1,5 +1,6 @@
 use crate::domain::Member;
 use crate::domain::errors::Result;
+use crate::domain::value_object::Pagination;
 use uuid::Uuid;
 
 #[async_trait::async_trait]
@@ -9,4 +10,5 @@ pub trait MemberRepository {
     async fn find_by_id(&self, id: Uuid) -> Result<Option<Member>>;
     async fn find_by_organization(&self, org_id: Uuid) -> Result<Vec<Member>>;
     async fn delete(&self, id: Uuid) -> Result<()>;
+    async fn find_paginated(&self, pagination: &Pagination) -> Result<Vec<Member>>;
 }

@@ -4,6 +4,7 @@ use uuid::Uuid;
 
 use crate::domain::errors::{DomainError, Result};
 use crate::domain::repository::MemberRepository;
+use crate::domain::value_object::Pagination;
 use crate::domain::{Member, MemberRole};
 
 #[derive(Clone)]
@@ -129,5 +130,23 @@ impl MemberRepository for PostgresMemberRepository {
             .map_err(DomainError::custom_from_err)?;
 
         Ok(())
+    }
+
+    async fn find_paginated(&self, pagination: &Pagination) -> Result<Vec<Member>> {
+        let rows = sqlx::query(
+            "SELECT id, organization_id, division_id, name, email, role
+             FROM public.members
+             ORDER BY id
+             LIMIT $1 OFFSET $2",
+        )
+        .bind(pagination.limit())
+        .bind(pagination.offset())
+        .fetch_all(&self.pool)
+        .await
+        .map_err(DomainError::custom_from_err)?;
+
+        rows.into_iter()
+            .map(|row| Self::row_to_member(&row))
+            .collect()
     }
 }
