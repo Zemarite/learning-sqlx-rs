@@ -7,7 +7,7 @@ use uuid::Uuid;
 use learning_sqlx_rs::application::{GetMemberByIdQuery, handle_get_member_by_id};
 use learning_sqlx_rs::domain::errors::DomainError;
 use learning_sqlx_rs::infrastructure::PostgresMemberRepository;
-use learning_sqlx_rs::{Organization, get_all_members};
+use learning_sqlx_rs::{Organization, get_members};
 
 #[tokio::main] // Requires the `attributes` feature of `async-std`
 // or #[tokio::main]
@@ -42,7 +42,7 @@ async fn select_users(db: &sqlx::Pool<sqlx::Postgres>) -> result::Result<(), sql
     // let query = "SELECT id, name FROM public.members";
     // let users = sqlx::query(query).fetch_all(db).await?;\
     let repo = PostgresMemberRepository::new(db.clone());
-    let users = get_all_members(&repo).await.unwrap();
+    let users = get_members(&repo).await.unwrap();
 
     for user in users {
         println!("id: {}, name: {}", user.id(), user.name());
