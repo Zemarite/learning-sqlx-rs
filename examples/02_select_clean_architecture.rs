@@ -4,11 +4,10 @@ use std::result;
 use time::OffsetDateTime;
 use uuid::Uuid;
 
-
-use learning_sqlx_rs::application::{handle_get_member_by_id, GetMemberByIdQuery};
+use learning_sqlx_rs::application::{GetMemberByIdQuery, handle_get_member_by_id};
 use learning_sqlx_rs::domain::errors::DomainError;
 use learning_sqlx_rs::infrastructure::PostgresMemberRepository;
-use learning_sqlx_rs:: Organization;
+use learning_sqlx_rs::{Organization, get_all_members};
 
 #[tokio::main] // Requires the `attributes` feature of `async-std`
 // or #[tokio::main]
@@ -21,9 +20,9 @@ async fn main() -> Result<(), sqlx::Error> {
         .connect(&database_url)
         .await?;
 
-    get_member_by_id(&db).await?;
+    //get_member_by_id(&db).await?;
 
-    // select_users(&db).await?;
+    select_users(&db).await?;
 
     // println!("---------- DDD style OrganizationResponse: ");
     // select_organization_response(&db).await?;
@@ -40,15 +39,13 @@ async fn main() -> Result<(), sqlx::Error> {
 /// Fetches every row from `public.members` using a raw query and prints
 /// each member's `id` and `name`.
 async fn select_users(db: &sqlx::Pool<sqlx::Postgres>) -> result::Result<(), sqlx::Error> {
-    let query = "SELECT id, name FROM public.members";
-    let users = sqlx::query(query).fetch_all(db).await?;
+    // let query = "SELECT id, name FROM public.members";
+    // let users = sqlx::query(query).fetch_all(db).await?;\
+    let repo = PostgresMemberRepository::new(db.clone());
+    let users = get_all_members(&repo).await.unwrap();
 
     for user in users {
-        println!(
-            "id: {}, name: {}",
-            user.get::<Uuid, _>("id"),
-            user.get::<String, _>("name")
-        );
+        println!("id: {}, name: {}", user.id(), user.name());
     }
     Ok(())
 }
