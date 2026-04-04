@@ -1,3 +1,3 @@
-pub mod member;
+pub mod member_repository;
 
-pub use member::PostgresMemberRepository;
+pub use member_repository::PostgresMemberRepository;

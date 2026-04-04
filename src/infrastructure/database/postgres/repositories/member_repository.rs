@@ -17,12 +17,7 @@ impl PostgresMemberRepository {
     }
 
     fn role_to_db(role: MemberRole) -> &'static str {
-        match role {
-            MemberRole::Admin => "admin",
-            MemberRole::Manager => "manager",
-            MemberRole::Member => "member",
-            MemberRole::Guest => "guest",
-        }
+        role.as_str()
     }
 
     fn row_to_member(row: &sqlx::postgres::PgRow) -> Result<Member> {
@@ -44,7 +39,7 @@ impl PostgresMemberRepository {
 
         let role = match role_str {
             Some(raw) => MemberRole::from_str(&raw)?,
-            None => MemberRole::Member,
+            None => MemberRole::OperationsManager,
         };
 
         Member::new(organization_id, name, email, role, division_id)

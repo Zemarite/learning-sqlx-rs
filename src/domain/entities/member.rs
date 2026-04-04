@@ -103,7 +103,7 @@ mod tests {
             organization_id,
             "Alice".to_string(),
             Some("alice@example.com".to_string()),
-            MemberRole::Manager,
+            MemberRole::ProductManager,
             Some(division_id),
         )
         .unwrap();
@@ -112,7 +112,7 @@ mod tests {
         assert_eq!(member.division_id(), Some(division_id));
         assert_eq!(member.name(), "Alice");
         assert_eq!(member.email(), Some("alice@example.com"));
-        assert_eq!(member.role(), MemberRole::Manager);
+        assert_eq!(member.role(), MemberRole::ProductManager);
     }
 
     #[test]
@@ -122,7 +122,7 @@ mod tests {
             organization_id,
             "Bob".to_string(),
             None,
-            MemberRole::Member,
+            MemberRole::FinanceAnalyst,
             None,
         )
         .unwrap();
@@ -131,7 +131,7 @@ mod tests {
         assert_eq!(member.division_id(), None);
         assert_eq!(member.name(), "Bob");
         assert_eq!(member.email(), None);
-        assert_eq!(member.role(), MemberRole::Member);
+        assert_eq!(member.role(), MemberRole::FinanceAnalyst);
     }
 
     #[test]
@@ -140,7 +140,7 @@ mod tests {
             Uuid::new_v4(),
             "Chris".to_string(),
             Some("invalid-email".to_string()),
-            MemberRole::Guest,
+            MemberRole::MarketingSpecialist,
             None,
         );
 
@@ -156,7 +156,7 @@ mod tests {
             Uuid::new_v4(),
             "Dana".to_string(),
             Some("dana@example.com".to_string()),
-            MemberRole::Member,
+            MemberRole::FrontendEngineer,
             None,
         )
         .unwrap();
@@ -164,8 +164,8 @@ mod tests {
         member.change_name("Dana Updated".to_string()).unwrap();
         assert_eq!(member.name(), "Dana Updated");
 
-        member.change_role(MemberRole::Admin);
-        assert_eq!(member.role(), MemberRole::Admin);
+        member.change_role(MemberRole::SeniorBackendEngineer);
+        assert_eq!(member.role(), MemberRole::SeniorBackendEngineer);
 
         let division_id = Uuid::new_v4();
         member.assign_to_division(division_id);

@@ -1,9 +1,14 @@
-use learning_sqlx_rs::Organization;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{PgPool, Row};
 use std::result;
 use time::OffsetDateTime;
 use uuid::Uuid;
+
+
+use learning_sqlx_rs::application::{handle_get_member_by_id, GetMemberByIdQuery};
+use learning_sqlx_rs::domain::errors::DomainError;
+use learning_sqlx_rs::infrastructure::PostgresMemberRepository;
+use learning_sqlx_rs:: Organization;
 
 #[tokio::main] // Requires the `attributes` feature of `async-std`
 // or #[tokio::main]
@@ -16,15 +21,15 @@ async fn main() -> Result<(), sqlx::Error> {
         .connect(&database_url)
         .await?;
 
-    find_user_by_id(&db).await?;
-    println!("---------- Users: ");
-    select_users(&db).await?;
+    get_member_by_id(&db).await?;
 
-    println!("---------- DDD style OrganizationResponse: ");
-    select_organization_response(&db).await?;
+    // select_users(&db).await?;
 
-    println!("---------- DDD style Organization Entity: ");
-    select_organization_entity(&db).await?;
+    // println!("---------- DDD style OrganizationResponse: ");
+    // select_organization_response(&db).await?;
+
+    // println!("---------- DDD style Organization Entity: ");
+    // select_organization_entity(&db).await?;
 
     // println!("---------- Users join Organizations: ");
     // select_users_join_organizations(&db).await?;
@@ -35,7 +40,6 @@ async fn main() -> Result<(), sqlx::Error> {
 /// Fetches every row from `public.members` using a raw query and prints
 /// each member's `id` and `name`.
 async fn select_users(db: &sqlx::Pool<sqlx::Postgres>) -> result::Result<(), sqlx::Error> {
-    let id = Uuid::parse_str("9b29622c-add1-42e5-b5e2-b6f9246939c5").unwrap();
     let query = "SELECT id, name FROM public.members";
     let users = sqlx::query(query).fetch_all(db).await?;
 
@@ -49,16 +53,16 @@ async fn select_users(db: &sqlx::Pool<sqlx::Postgres>) -> result::Result<(), sql
     Ok(())
 }
 
-async fn find_user_by_id(db: &sqlx::Pool<sqlx::Postgres>) -> result::Result<(), sqlx::Error> {
-    let id = Uuid::parse_str("9b29622c-add1-42e5-b5e2-b6f9246939c5").unwrap();
-    // let query = "SELECT id, name FROM public.members where id = $1";
-    let users = sqlx::query!("SELECT id, name FROM public.members where id = $1", id)
-        .fetch_all(db)
-        .await?;
+async fn get_member_by_id(db: &sqlx::Pool<sqlx::Postgres>) -> result::Result<(), sqlx::Error> {
+    let query = GetMemberByIdQuery {
+        id: Uuid::parse_str("9b29622c-add1-42e5-b5e2-b6f9246939c5").unwrap(),
+    };
 
-    for user in users {
-        println!("id: {}, name: {}", user.id, user.name);
-    }
+    let repo = PostgresMemberRepository::new(db.clone());
+    let member = handle_get_member_by_id(&repo, query).await.unwrap();
+
+    println!("Member: {:?}", member);
+
     Ok(())
 }
 
